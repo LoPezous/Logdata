@@ -5,20 +5,16 @@ def logs():
     
         # YOUR CODE HERE
         log_list = []
-        log_dict = {}
-        regexpattern = "(\d{1,4}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
-        regexpattern2 = "\s-\s\w+"
-        for item in re.findall(regexpattern, logdata):
-            
-            #log_dict = {}
-            log_dict["host"] = item
-            log_list.append(log_dict)
         
-        for item2 in re.findall(regexpattern2, logdata):
-
-            log_dict["user_name"] = item2
+        regexpattern = "(\d{1,4}\.\d{1,3}\.\d{1,3}\.\d{1,3})( - .* )(\[\d{2}\/\w{3}\/\d{4}\:\d{2}\:\d{2}\:\d{2}\s\-\d{4}\])( \".*?\")"
+        
+        for item in re.finditer(regexpattern, logdata):
+            
+            log_dict = {}
+            log_dict["host"] = item.group(1)
+            log_dict["user_name"] = item.group(2).replace(' - ','').replace(' ','')
+            log_dict["time"] = item.group(3).replace('[','').replace(']','')
+            log_dict["request"] = item.group(4).replace(' "',"").replace('"',"")
             log_list.append(log_dict)
-            log_dict["time"] = item.group(3)
-            #log_dict["request"] = item.group(4)
         
         return log_list
